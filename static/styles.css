@@ -1,0 +1,15 @@
+.row .col-sm:hover {
+    background-color: aliceblue;
+}
+.row .col-sm {
+    background-color: rgb(233, 245, 255);
+}
+
+main {
+    text-align: center;
+}
+
+.form-control {
+    display: inline-block;
+    width: auto;
+}
