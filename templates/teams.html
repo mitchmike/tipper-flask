@@ -1,9 +1,62 @@
 {% extends "layout.html" %}
 
 {% block titleblock %}
-Home
+Teams
 {% endblock %}
 
 {% block main %}
-Hello World!
+<div class="container">
+    
+    <form action="/teams" method="post">
+        <div class="form-group">
+            <label>Season: </label>
+            <select  autocomplete="off" class="form-control" name="season"  placeholder="Season">
+                <option disabled selected value="">Season</option>
+                <option value="2019">2019</option>
+                <option value="2020">2020</option>
+                <option value="2021">2021</option>
+            </select>
+            <button type="submit" class="btn btn-primary">Get Ladder</button>
+        </div>
+        
+    </form>
+    {% if teams %}
+    
+    <br/>
+    <table class="table table-hover">
+        <thead class="thead-dark">
+            <tr><th colspan="5"><h1>{{season}} Ladder</h1></th></tr>
+            <tr>
+                <th scope="col" style="text-align: end;">Team</th>
+                <th scope="col">W</th>
+                <th scope="col">L</th>
+                <th scope="col">D</th>
+                <th scope="col">%</th>
+            </tr>
+        </thead>
+        {% for team in teams %}
+            
+                <tr id={{team.teamname}} class="clickable-row" style="cursor: pointer;" data-href="/teams?team={{team.teamname}}">
+                    <td style="text-align: end;">{{ team.fullname }}</td>
+                    <td>{{ team.wins }}</td>
+                    <td>{{ team.losses }}</td>
+                    <td>{{ team.draws }}</td>
+                    <td>{{ (team.pf / team.pa * 100) | formatpcnt}}</td>
+                </tr>
+            
+        {% endfor %}
+        
+        
+
+    </table>
+    {% endif %}
+    
+</div>
+<script>
+$(".clickable-row").click(function () {
+    window.location = $(this).data('href');
+});
+
+</script>
+
 {% endblock %}

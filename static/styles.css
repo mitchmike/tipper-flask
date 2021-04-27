@@ -13,3 +13,94 @@ main {
     display: inline-block;
     width: auto;
 }
+
+#richmond:hover {
+    color: black;
+    background-color: #ffd200;
+}
+
+#melbourne:hover {
+    color: white;
+    background-color: #cc2031;
+}
+
+#brisbanel:hover {
+    color: white;
+    background-color: #7c0040;
+}
+
+
+#bullldogs:hover {
+    color: white;
+    background-color: #1b2e71;
+}
+
+#geelong:hover {
+    color: white;
+    background-color: #002b5c;
+}
+
+#padelaide:hover {
+    color: white;
+    background-color: #008aab;
+}
+
+#stkilda:hover {
+    color: white;
+    background-color: #ed1b2f;
+}
+
+#collingwood:hover {
+    color: white;
+    background-color: #000000;
+}
+
+#gws:hover {
+    color: white;
+    background-color: #f47920;
+}
+
+#carlton:hover {
+    color: white;
+    background-color: #031a29;
+}
+
+#fremantle:hover {
+    color: white;
+    background-color: #2a0d54;
+}
+
+#essendon:hover {
+    color: white;
+    background-color: #CC2031;
+}
+
+#goldcoast:hover {
+    color: white;
+    background-color: #ee3728;
+}
+
+#hawthorn:hover {
+    color: white;
+    background-color: #4d2004;
+}
+
+#swans:hover {
+    color: white;
+    background-color: #ed171f;
+}
+
+#kangaroos:hover {
+    color: black;
+    background-color: #c4d1e5;
+}
+
+#adelaide:hover {
+    color: black;
+    background-color: gold;
+}
+
+#westcoast:hover {
+    color: black;
+    background-color: #f2a900;
+}

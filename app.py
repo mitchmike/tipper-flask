@@ -1,9 +1,10 @@
-from flask import Flask, render_template,  request, session, redirect
+from flask import Flask, render_template,  request, session, redirect, g
 from flask_session import Session
 from tempfile import mkdtemp
 import requests
 from dotenv import load_dotenv
 import os
+from helpers import login_required, formatpcnt
 
 load_dotenv()
 
@@ -15,6 +16,7 @@ Session(app)
 
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
+app.jinja_env.filters["formatpcnt"] = formatpcnt
 
 restEndpoint = os.environ.get('REST_ENDPOINT')
 
@@ -28,12 +30,12 @@ def after_request(response):
 
 # about tipper
 @app.route('/')
+@login_required
 def index():
     return render_template("index.html")
 
 
 @app.route('/login', methods=["GET","POST"])
-# @login_required
 def login():
     if request.method=="GET":
         return render_template("login.html")
@@ -51,7 +53,7 @@ def login():
     
     #call signin endpoint on rest api
     res = requests.post(f'{restEndpoint}/signin',data={'email':username,'password':password}).json()
-    
+
     if "id" in res:
         session["user_id"] = res['id']
         return redirect('/')
@@ -61,13 +63,12 @@ def login():
     return render_template('login.html', error=error)
     
 @app.route('/logout')
-# @login_required
+@login_required
 def logout():
     session.clear()
     return redirect('/')
 
 @app.route('/register', methods=["GET", "POST"])
-# @login_required
 def register():
     if request.method=="GET":
         return render_template("register.html")
@@ -86,6 +87,7 @@ def register():
 
     #call register endpoint on rest api
     res = requests.post(f'{restEndpoint}/register',data={'email':username,'password':password}).json()
+    
     if "id" in res:
         session["user_id"] = res['id']
         return redirect('/')
@@ -97,20 +99,36 @@ def register():
     
 
 # list of teams. can sort as ladder, can drill down to view their games / stats
-@app.route('/teams')
-# @login_required
+@app.route('/teams', methods=['GET','POST'])
+@login_required
 def teams():
-    return render_template("teams.html")
+    if request.method == 'GET':
+        team = request.args.get('team')
+        if team:
+            return render_template("teamdetail.html")
+        return render_template("teams.html")
+    
+    season = request.form.get('season')
+    teams = requests.get(f'{restEndpoint}/teams').json()
+    print(teams)
+    ladder = requests.get(f'{restEndpoint}/ladder/{season}').json()
+
+    for team in ladder:
+        #look for team_identifier
+        detail = next((x for x in teams if x['team_identifier'] == team['teamname']),None)
+        team['fullname'] = f"{detail['city']} {detail['name']}"
+        print(team)
+    return render_template('teams.html',teams=ladder, season=season)
 
 @app.route('/teamdetail')
-# @login_required
+@login_required
 def teamdetail():
     return render_template("teamdetail.html")
 
 
 # source odds from betting companies and also a random number generator for the probability of winning for a team -> give a tipscore/value score based on that
 @app.route('/tip')
-# @login_required
+@login_required
 def tip():
-    return render_template("index.html")
+    return render_template("tip.html")
 
