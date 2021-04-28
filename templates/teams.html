@@ -10,7 +10,7 @@ Teams
     <form action="/teams" method="post">
         <div class="form-group">
             <label>Season: </label>
-            <select  autocomplete="off" class="form-control" name="season"  placeholder="Season">
+            <select required autocomplete="off" class="form-control" name="season"  placeholder="Season">
                 <option disabled selected value="">Season</option>
                 <option value="2019">2019</option>
                 <option value="2020">2020</option>
@@ -36,7 +36,7 @@ Teams
         </thead>
         {% for team in teams %}
             
-                <tr id={{team.teamname}} class="clickable-row" style="cursor: pointer;" data-href="/teams?team={{team.teamname}}">
+                <tr id={{team.teamname}} class="clickable-row" style="cursor: pointer;" data-href="/teamdetail?team={{team.teamname}}">
                     <td style="text-align: end;">{{ team.fullname }}</td>
                     <td>{{ team.wins }}</td>
                     <td>{{ team.losses }}</td>

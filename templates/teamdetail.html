@@ -1,9 +1,88 @@
 {% extends "layout.html" %}
 
 {% block titleblock %}
-Home
+{{ team }}
 {% endblock %}
 
 {% block main %}
-Hello World!
+
+<div class="container" id="teamdetail">
+    <div class="row">
+        {% if not team %}
+            {% for t in teamslist %}
+            <form href="/teamdetail" method="get">
+                <input type="hidden" name="team" value="{{t.team_identifier}}" />    
+                <button type="submit" id="{{t.team_identifier}}" class="btn btn-light" >{{ t.city }}</button>
+            </form>
+            {% endfor %}
+        {% else %}
+        <div class="col">
+          <image src='/static/logos/{{ team }}.png' alt="team-logo">
+        </div>
+        <div class="col" style="display: flex; align-items: center;">
+          <h1>
+            {% if games %}
+                <td>{{ games[0].city }} {{ games[0].name }}</td>
+            {% else %}
+                <td>{{ team }}</td>
+            {% endif %}
+          </h1>
+        </div>
+      </div>
+      <div class="row" style="height: 40px;"></div>
+      <div class="row">
+        <div class="col">
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                        <th colspan="9"><h1>Games</h1></th>
+                    </tr>
+                    <tr>
+                        <th scope="col">Date</th>
+                        <th scope="col">Round</th>
+                        <th scope="col">Year</th>
+                        <th scope="col">Team</th>
+                        <th scope="col">For</th>
+                        <th scope="col">Opponent</th>
+                        <th scope="col">Against</th>
+                        <th scope="col">Winner</th>
+                        <th scope="col">Venue</th>
+                    </tr>
+                </thead>
+                {% for game in games %}
+                        <tr>
+                            <td>{{ game.date }}</td>
+                            <td>{{ game.round }}</td>
+                            <td>{{ game.year }}</td>
+                            <td>{{ game.team }}</td>
+                            <td>{{ game.for }}</td>
+                            <td>{{ game.opponent }}</td>
+                            <td>{{ game.against }}</td>
+                            {% if game.for > game.against %}
+                                <td>{{ game.team }}</td>.
+                            {% elif game.for == game.against %}
+                                <td>Draw</td>
+                            {% else %}
+                                <td>{{ game.opponent }}</td>
+                            {% endif %}
+                            <td>{{ game.venue }}</td>
+                        </tr>
+                    
+                {% endfor %}
+                
+                
+        
+            </table>
+        </div>
+      </div>
+
+      {% endif %}
+</div>
+
+
+{% endblock %}
+
+
+{% block script %}
+<script src='/static/teamdetail.js'></script>
 {% endblock %}

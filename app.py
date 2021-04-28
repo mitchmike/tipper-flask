@@ -103,27 +103,33 @@ def register():
 @login_required
 def teams():
     if request.method == 'GET':
-        team = request.args.get('team')
-        if team:
-            return render_template("teamdetail.html")
         return render_template("teams.html")
     
     season = request.form.get('season')
     teams = requests.get(f'{restEndpoint}/teams').json()
-    print(teams)
     ladder = requests.get(f'{restEndpoint}/ladder/{season}').json()
 
     for team in ladder:
         #look for team_identifier
         detail = next((x for x in teams if x['team_identifier'] == team['teamname']),None)
         team['fullname'] = f"{detail['city']} {detail['name']}"
-        print(team)
     return render_template('teams.html',teams=ladder, season=season)
 
 @app.route('/teamdetail')
 @login_required
 def teamdetail():
-    return render_template("teamdetail.html")
+    print(request)
+    team = request.args.get('team')
+    if team:
+        # get stats for team
+        games = requests.get(f'{restEndpoint}/games/byyearandteam/{team}/2020').json()
+        performances = requests.post(f'{restEndpoint}/performancesAllSearchOpts/',data={'team':team}).json()
+        
+        return render_template("teamdetail.html", team=team,games=games,performances=performances)
+
+    teams = requests.get(f'{restEndpoint}/teams').json()
+    print(teams)
+    return render_template("teamdetail.html",teamslist=teams)
 
 
 # source odds from betting companies and also a random number generator for the probability of winning for a team -> give a tipscore/value score based on that
