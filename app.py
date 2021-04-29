@@ -100,13 +100,15 @@ def register():
     
 
 # list of teams. can sort as ladder, can drill down to view their games / stats
-@app.route('/teams', methods=['GET','POST'])
+@app.route('/ladder', methods=['GET','POST'])
 @login_required
-def teams():
-    if request.method == 'GET':
-        return render_template("teams.html")
+def ladder():
     
     season = request.form.get('season')
+    #default season to 2020
+    if not season:
+        season = '2020'
+        
     teams = requests.get(f'{restEndpoint}/teams').json()
     ladder = requests.get(f'{restEndpoint}/ladder/{season}').json()
 
@@ -114,11 +116,15 @@ def teams():
         #look for team_identifier
         detail = next((x for x in teams if x['team_identifier'] == team['teamname']),None)
         team['fullname'] = f"{detail['city']} {detail['name']}"
-    return render_template('teams.html',teams=ladder, season=season)
+    return render_template('ladder.html',ladder=ladder, season=season)
+
+
 
 @app.route('/teamdetail',methods=['GET','POST'])
 @login_required
 def teamdetail():
+    
+    
     # team is required for teamdetail. 
     if request.method=='GET':
         team = request.args.get('team')
@@ -148,15 +154,18 @@ def teamdetail():
     availablestats = [item for item in list(pcntdiffStats[0].keys()) if item not in [
         'team_id','opponent','year','round'
         ]]
-    
+
+    selectedstats=request.form.getlist('stat')
+    if not selectedstats:
+        #default selected stats
+        selectedstats=['disposals']
+
     # populate data for chart
     data=[]
-    stats=request.form.getlist('stat')
-    for stat in stats:
+    for stat in selectedstats:
         disposals=[]
         series = {
             'type':"line",
-            # 'axisYType': "secondary",
             'name': stat,
             'showInLegend': True,
             'markerSize': 0,
@@ -166,7 +175,7 @@ def teamdetail():
             series['dataPoints'].append({'x':round['round'], 'y':round[stat]})
         data.append(series)
 
-    return render_template("teamdetail.html", team=team,games=games,pcntdiffs=data,availablestats=availablestats)
+    return render_template("teamdetail.html", team=team,games=games,pcntdiffs=data,availablestats=availablestats,selectedstats=selectedstats)
 
     
 

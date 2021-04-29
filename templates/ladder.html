@@ -7,23 +7,28 @@ Teams
 {% block main %}
 <div class="container">
     
-    <form action="/teams" method="post">
+    <form action="/ladder" method="post">
         <div class="form-group">
             <label>Season: </label>
             <select required autocomplete="off" class="form-control" name="season"  placeholder="Season">
                 <option disabled selected value="">Season</option>
-                <option value="2019">2019</option>
-                <option value="2020">2020</option>
-                <option value="2021">2021</option>
+                {% for s in ['2019','2020','2021'] %}
+                    {% if s == season %}
+                        <option selected value="{{ s }}">{{ s }}</option>
+                    {% else %}
+                        <option value="{{ s }}">{{ s }}</option>
+                    {% endif %}
+                {% endfor %}
             </select>
             <button type="submit" class="btn btn-primary">Get Ladder</button>
         </div>
         
     </form>
-    {% if teams %}
+    {% if ladder %}
     
     <br/>
-    <table class="table table-hover">
+    <div class="container">
+    <table class="table table-hover" style="max-width: 1100px; margin:auto">
         <thead class="thead-dark">
             <tr><th colspan="5"><h1>{{season}} Ladder</h1></th></tr>
             <tr>
@@ -34,7 +39,7 @@ Teams
                 <th scope="col">%</th>
             </tr>
         </thead>
-        {% for team in teams %}
+        {% for team in ladder %}
             
                 <tr id={{team.teamname}} class="clickable-row" style="cursor: pointer;" data-href="/teamdetail?team={{team.teamname}}">
                     <td style="text-align: end;">{{ team.fullname }}</td>
@@ -49,6 +54,7 @@ Teams
         
 
     </table>
+    </div>
     {% endif %}
     
 </div>

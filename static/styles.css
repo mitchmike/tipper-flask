@@ -18,6 +18,13 @@ main {
     max-width:100%;
 }
 
+.display-5 {
+    font-size: 2.5rem;
+    font-weight: 300;
+    line-height: 1.2;
+}
+
+
 .gamewin {
     background-color:rgb(107, 221, 107);
 }
@@ -26,16 +33,22 @@ main {
     background-color: rgb(236, 113, 113);
 }
 
+.jumbotron {
+    background-color: #343a40!important;
+    color: #f7f7f9;
+}
 
+.statcheckboxes {
+    padding:10px;
+    background-color: #f7f7f9;
+}
 
-
-
-
-
-
-
-
-
+.teamdetailchoice {
+    max-width: 1100px;
+    display: flex;
+    flex-wrap: wrap;
+    margin: auto;
+}
 
 #richmond:hover {
     color: black;

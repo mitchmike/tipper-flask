@@ -3,8 +3,7 @@
 {% block headblock %}
 {% if pcntdiffs %}
 <script>
-    console.log({{ pcntdiffs|tojson }});
-    window.onload = function () {
+     window.onload = function () {
     
     var chart = new CanvasJS.Chart("chartContainer", {
         theme: "light2",
@@ -53,59 +52,36 @@
 {% block main %}
 
 <div class="container" id="teamdetail">
-    <div class="row">
+    <div class="row" style="margin: auto;">
         {% if not team %}
+        <h1 class="display-4">Choose Team</h1>
+        <div class="container teamdetailchoice">
+            
             {% for t in teamslist %}
-            <form href="/teamdetail" method="get">
-                <input type="hidden" name="team" value="{{t.team_identifier}}" />    
-                <button type="submit" id="{{t.team_identifier}}" class="btn btn-light" >{{ t.city }}</button>
-            </form>
-            {% endfor %}
-        {% else %}
-        <div class="col">
-          <image src='/static/logos/{{ team }}.png' alt="team-logo">
-        </div>
-        <div class="col" style="display: flex; align-items: center;">
-          <h1>
-            {% if games %}
-                <td>{{ games[0].city }} {{ games[0].name }}</td>
-            {% else %}
-                <td>{{ team }}</td>
-            {% endif %}
-          </h1>
-        </div>
-        </div>
-        <div class="row" style="height: 40px;"></div>
-        
-        <div class="row" >
-        <div id="chartContainer" style="height: 370px; width: 100%;"></div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <form action="/teamdetail" method="post">
-                    <input type="hidden" name="team" value="{{ team }}">
-                    {% for stat in availablestats %}
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" name="stat" type="checkbox" value="{{ stat }}" id="{{ stat }}">
-                        <label class="form-check-label" for="{{ stat }}">
-                        {{ stat }}
-                        </label>
-                    </div>
-                    {% endfor %}   
-                    <div class="form-group">
-                        <button class="btn btn-primary" type="submit">Update</button>       
-                    </div> 
+                <form href="/teamdetail" method="get" style="padding: 2px;">
+                    <input type="hidden" name="team" value="{{t.team_identifier}}" />    
+                    <button type="submit" id="{{t.team_identifier}}" class="btn btn-light" >{{ t.city }}</button>
                 </form>
-            </div>
+            {% endfor %}
+            
         </div>
-        <div class="row" style="height: 40px;"></div>
-
-        <div class="row">
-        <div class="col">
-            <table class="table">
+        {% else %}
+        <div class="col-xs jumbotron" style="margin: auto;">
+            
+            <image src='/static/logos/{{ team }}.png' alt="team-logo" style="width: 200px;">
+            <h1 class="display-4">
+                {% if games %}
+                    <td>{{ games[0].city }} {{ games[0].name }}</td>
+                {% else %}
+                    <td>{{ team }}</td>
+                {% endif %}
+            </h1>
+        </div>
+        <div class="col-8" style="margin: auto; display: flex; justify-content: center;" >
+            <table class="table-sm">
                 <thead class="thead-dark">
                     <tr>
-                        <th colspan="9"><h1>Recent Form</h1></th>
+                        <th colspan="9"><h1 class="display-5">Recent Form</h1></th>
                     </tr>
                     <tr>
                         <th scope="col">Date</th>
@@ -126,7 +102,7 @@
                 {% else %}
                     <tr class='gameloss'>
                 {% endif %}
-                            <td>{{ game.date }}</td>
+                            <td style="min-width: 200px;">{{ game.date }}</td>
                             <td>{{ game.round }}</td>
                             <td>{{ game.year }}</td>
                             <td>{{ game.team }}</td>
@@ -141,7 +117,38 @@
                 </tbody>
             </table>
         </div>
-      </div>
+        </div>
+        <div class="container" style="max-width: 1100px;">
+            <div class="row" style="height: 40px;"></div>
+                <form action="/teamdetail" method="post">
+                    <div class="row statcheckboxes">
+                    <div class="col-md">
+                        <input type="hidden" name="team" value="{{ team }}">
+                        {% for stat in availablestats %}
+                        <div class="form-check form-check-inline">
+                            {% if stat in selectedstats %}
+                            <input checked class="form-check-input" name="stat" type="checkbox" value="{{ stat }}" id="{{ stat }}">
+                            {% else %}
+                            <input class="form-check-input" name="stat" type="checkbox" value="{{ stat }}" id="{{ stat }}">
+                            {% endif %}
+                            <label class="form-check-label" for="{{ stat }}">
+                            {{ stat }}
+                            </label>
+                        </div>
+                        {% endfor %} 
+                    </div>  
+                    <div class="col-xs" style="margin: auto; display: flex; justify-content: flex-start;">
+                        <div class="form-group">
+                            <button class="btn btn-primary" type="submit">Display Stats</button>       
+                        </div> 
+                    </div>
+                </form>  
+            </div>     
+            <br/>
+            <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+        </div>
+        <div class="row" style="height: 40px;"></div>
+        
 
       {% endif %}
 </div>
