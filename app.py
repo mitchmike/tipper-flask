@@ -1,6 +1,7 @@
-from flask import Flask, render_template,  request, session, redirect, g
+from flask import Flask, render_template,  request, session, redirect, g, json
 from flask_session import Session
 from tempfile import mkdtemp
+import re
 import requests
 from dotenv import load_dotenv
 import os
@@ -115,20 +116,63 @@ def teams():
         team['fullname'] = f"{detail['city']} {detail['name']}"
     return render_template('teams.html',teams=ladder, season=season)
 
-@app.route('/teamdetail')
+@app.route('/teamdetail',methods=['GET','POST'])
 @login_required
 def teamdetail():
-    print(request)
-    team = request.args.get('team')
+    # print(request)
+    if request.method=='GET':
+        team = request.args.get('team')
+    else:
+        team = request.form.get('team')
     if team:
         # get stats for team
         games = requests.get(f'{restEndpoint}/games/byyearandteam/{team}/2020').json()
-        performances = requests.post(f'{restEndpoint}/performancesAllSearchOpts/',data={'team':team}).json()
+        games = [item for item in games if item['round'].isnumeric()]
+        games = sorted(games, key=lambda i: int(i['round']), reverse=True)
+        games = games[:10]
+        for game in games:
+            if game['for'] > game['against']:
+                winner = game['team']
+            elif game['for'] == game['against']:
+                winner = 'Draw'
+            else:
+                winner = game['opponent']
+            game['winner'] = winner
         
-        return render_template("teamdetail.html", team=team,games=games,performances=performances)
+        # chart
+        #check box selections
+        print(request.form.get('disposals'))
+
+        pcntdiffStats = requests.post(f'{restEndpoint}/pcntDiff/',data={'team':team, 'yearStart':2020,'yearEnd':2020}).json()
+        availablestats = [item for item in list(pcntdiffStats[0].keys()) if item not in [
+            'team_id','opponent','year','round'
+            ]]
+        # print(availablestats)
+        # stats=[]
+        # for stat in availablestats:
+        #     if request.form.get(stat):
+        #         stats.append(stat)
+        data=[]
+        stats=request.form.getlist('stat')
+        print(stats)
+        for stat in stats:
+            disposals=[]
+            series = {
+                'type':"line",
+                # 'axisYType': "secondary",
+                'name': stat,
+                'showInLegend': True,
+                'markerSize': 0,
+                'dataPoints':[]
+            }
+            for round in pcntdiffStats:
+                series['dataPoints'].append({'x':round['round'], 'y':round[stat]})
+            data.append(series)
+
+        return render_template("teamdetail.html", team=team,games=games,pcntdiffs=data,availablestats=availablestats)
 
     teams = requests.get(f'{restEndpoint}/teams').json()
-    print(teams)
+    # print(teams)
     return render_template("teamdetail.html",teamslist=teams)
 
 

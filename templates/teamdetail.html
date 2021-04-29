@@ -1,8 +1,54 @@
 {% extends "layout.html" %}
 
+{% block headblock %}
+{% if pcntdiffs %}
+<script>
+    console.log({{ pcntdiffs|tojson }});
+    window.onload = function () {
+    
+    var chart = new CanvasJS.Chart("chartContainer", {
+        theme: "light2",
+        title: {
+            text: "% Difference from Opponent by Stat"
+        },
+        axisX: {
+            minimum: 0,
+            maximum:20
+        },
+        toolTip: {
+            shared: true
+        },
+        legend: {
+            cursor: "pointer",
+            verticalAlign: "top",
+            horizontalAlign: "center",
+            dockInsidePlotArea: true,
+            itemclick: toogleDataSeries
+        },
+        data: {{ pcntdiffs|tojson }}
+    });
+    chart.render();
+    
+    function toogleDataSeries(e){
+        if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+            e.dataSeries.visible = false;
+        } else{
+            e.dataSeries.visible = true;
+        }
+        chart.render();
+    }
+    
+    }
+    </script>
+{% endif %}
+{% endblock %}
+
 {% block titleblock %}
 {{ team }}
 {% endblock %}
+
+
+
 
 {% block main %}
 
@@ -28,14 +74,38 @@
             {% endif %}
           </h1>
         </div>
-      </div>
-      <div class="row" style="height: 40px;"></div>
-      <div class="row">
+        </div>
+        <div class="row" style="height: 40px;"></div>
+        
+        <div class="row" >
+        <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <form action="/teamdetail" method="post">
+                    <input type="hidden" name="team" value="{{ team }}">
+                    {% for stat in availablestats %}
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" name="stat" type="checkbox" value="{{ stat }}" id="{{ stat }}">
+                        <label class="form-check-label" for="{{ stat }}">
+                        {{ stat }}
+                        </label>
+                    </div>
+                    {% endfor %}   
+                    <div class="form-group">
+                        <button class="btn btn-primary" type="submit">Update</button>       
+                    </div> 
+                </form>
+            </div>
+        </div>
+        <div class="row" style="height: 40px;"></div>
+
+        <div class="row">
         <div class="col">
             <table class="table">
                 <thead class="thead-dark">
                     <tr>
-                        <th colspan="9"><h1>Games</h1></th>
+                        <th colspan="9"><h1>Recent Form</h1></th>
                     </tr>
                     <tr>
                         <th scope="col">Date</th>
@@ -49,8 +119,13 @@
                         <th scope="col">Venue</th>
                     </tr>
                 </thead>
+                <tbody id='tablebod'>
                 {% for game in games %}
-                        <tr>
+                {% if game.winner == game.team %}
+                    <tr class='gamewin'>
+                {% else %}
+                    <tr class='gameloss'>
+                {% endif %}
                             <td>{{ game.date }}</td>
                             <td>{{ game.round }}</td>
                             <td>{{ game.year }}</td>
@@ -58,31 +133,20 @@
                             <td>{{ game.for }}</td>
                             <td>{{ game.opponent }}</td>
                             <td>{{ game.against }}</td>
-                            {% if game.for > game.against %}
-                                <td>{{ game.team }}</td>.
-                            {% elif game.for == game.against %}
-                                <td>Draw</td>
-                            {% else %}
-                                <td>{{ game.opponent }}</td>
-                            {% endif %}
+                            <td>{{ game.winner }}</td>
                             <td>{{ game.venue }}</td>
                         </tr>
                     
                 {% endfor %}
-                
-                
-        
+                </tbody>
             </table>
         </div>
       </div>
 
       {% endif %}
 </div>
+<script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
 
 
-{% endblock %}
 
-
-{% block script %}
-<script src='/static/teamdetail.js'></script>
 {% endblock %}

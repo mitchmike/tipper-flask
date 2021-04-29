@@ -18,7 +18,13 @@ main {
     max-width:100%;
 }
 
+.gamewin {
+    background-color:rgb(107, 221, 107);
+}
 
+.gameloss {
+    background-color: rgb(236, 113, 113);
+}
 
 
 
