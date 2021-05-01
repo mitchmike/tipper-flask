@@ -10,7 +10,7 @@ Teams
     <form action="/ladder" method="post">
         <div class="form-group">
             <label>Season: </label>
-            <select required autocomplete="off" class="form-control" name="season"  placeholder="Season">
+            <select required autocomplete="off" class="form-control" name="season"  placeholder="Season" style="vertical-align:middle">
                 <option disabled selected value="">Season</option>
                 {% for s in ['2019','2020','2021'] %}
                     {% if s == season %}

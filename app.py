@@ -175,7 +175,13 @@ def teamdetail():
             series['dataPoints'].append({'x':round['round'], 'y':round[stat]})
         data.append(series)
 
-    return render_template("teamdetail.html", team=team,games=games,pcntdiffs=data,availablestats=availablestats,selectedstats=selectedstats)
+    # to remember location on page when looking at stats
+    scrollPos = request.form.get("scrollPos")
+    return render_template("teamdetail.html", 
+                            team=team,games=games,pcntdiffs=data,
+                            availablestats=availablestats,selectedstats=selectedstats,
+                            scrollPos=scrollPos
+                        )
 
     
 

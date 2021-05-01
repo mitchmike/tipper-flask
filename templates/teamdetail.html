@@ -55,6 +55,7 @@
     <div class="row" style="margin: auto;">
         {% if not team %}
         <h1 class="display-4">Choose Team</h1>
+        
         <div class="container teamdetailchoice">
             
             {% for t in teamslist %}
@@ -66,8 +67,7 @@
             
         </div>
         {% else %}
-        <div class="col-xs jumbotron" style="margin: auto;">
-            
+        <div class="col-xs jumbotron" style="margin: auto; margin-bottom: 40px;">
             <image src='/static/logos/{{ team }}.png' alt="team-logo" style="width: 200px;">
             <h1 class="display-4">
                 {% if games %}
@@ -78,7 +78,7 @@
             </h1>
         </div>
         <div class="col-8" style="margin: auto; display: flex; justify-content: center;" >
-            <table class="table-sm">
+            <table class="table-sm table-striped table-bordered">
                 <thead class="thead-dark">
                     <tr>
                         <th colspan="9"><h1 class="display-5">Recent Form</h1></th>
@@ -95,23 +95,23 @@
                         <th scope="col">Venue</th>
                     </tr>
                 </thead>
-                <tbody id='tablebod'>
+                <tbody>
                 {% for game in games %}
-                {% if game.winner == game.team %}
-                    <tr class='gamewin'>
-                {% else %}
-                    <tr class='gameloss'>
-                {% endif %}
-                            <td style="min-width: 200px;">{{ game.date }}</td>
-                            <td>{{ game.round }}</td>
-                            <td>{{ game.year }}</td>
-                            <td>{{ game.team }}</td>
-                            <td>{{ game.for }}</td>
-                            <td>{{ game.opponent }}</td>
-                            <td>{{ game.against }}</td>
-                            <td>{{ game.winner }}</td>
-                            <td>{{ game.venue }}</td>
-                        </tr>
+                    <tr>
+                        <td style="min-width: 200px;">{{ game.date }}</td>
+                        <td>{{ game.round }}</td>
+                        <td>{{ game.year }}</td>
+                        <td>{{ game.team }}</td>
+                        <td>{{ game.for }}</td>
+                        <td>{{ game.opponent }}</td>
+                        <td>{{ game.against }}</td>
+                        {% if game.winner == game.team %}
+                        <td class='table-success'>{{ game.winner }}</td>
+                        {% else %}
+                        <td class='table-danger'>{{ game.winner }}</td>
+                        {% endif %}
+                        <td>{{ game.venue }}</td>
+                    </tr>
                     
                 {% endfor %}
                 </tbody>
@@ -124,6 +124,7 @@
                     <div class="row statcheckboxes">
                     <div class="col-md">
                         <input type="hidden" name="team" value="{{ team }}">
+                        <input type="hidden" name="scrollPos" id="scrollPos" value="">
                         {% for stat in availablestats %}
                         <div class="form-check form-check-inline">
                             {% if stat in selectedstats %}
@@ -153,7 +154,18 @@
       {% endif %}
 </div>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
-
+<script type="text/javascript">
+    $(document).ready(function () {
+        hiddenFormNode = document.querySelector("#scrollPos")
+        if ({{ scrollPos }}) {
+            hiddenFormNode.value = {{ scrollPos }}
+            $(window).scrollTop({{ scrollPos }});
+        }
+        $(window).on("scroll", function() {
+            hiddenFormNode.value=$(window).scrollTop()
+        });
+    });
+</script>
 
 
 {% endblock %}

@@ -24,18 +24,21 @@ main {
     line-height: 1.2;
 }
 
+.table-bordered td, .table-bordered th  {
+    border: 1px solid #000000
+}
 
 .gamewin {
-    background-color:rgb(107, 221, 107);
+    color:rgb(107, 221, 107);
+    background-color: #343a40!important;
 }
 
 .gameloss {
-    background-color: rgb(236, 113, 113);
+    color: rgb(236, 113, 113);
 }
 
 .jumbotron {
-    background-color: #343a40!important;
-    color: #f7f7f9;
+    background-color: #cbd1d6!important;
 }
 
 .statcheckboxes {
