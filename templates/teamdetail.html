@@ -14,6 +14,9 @@
             minimum: 0,
             maximum:20
         },
+        axisY: {
+            valueFormatString: "#%"
+        },
         toolTip: {
             shared: true
         },
@@ -67,7 +70,7 @@
             
         </div>
         {% else %}
-        <div class="col-xs jumbotron" style="margin: auto; margin-bottom: 40px;">
+        <div class="col-xs jumbotron" style="margin: auto; margin-bottom: 40px; background-color: #ffffff;">
             <image src='/static/logos/{{ team }}.png' alt="team-logo" style="width: 200px;">
             <h1 class="display-4">
                 {% if games %}
@@ -124,7 +127,7 @@
                     <div class="row statcheckboxes">
                     <div class="col-md">
                         <input type="hidden" name="team" value="{{ team }}">
-                        <input type="hidden" name="scrollPos" id="scrollPos" value="">
+                        <input type="hidden" name="scrollPos" id="scrollPos" value="{{ scrollPos }}">
                         {% for stat in availablestats %}
                         <div class="form-check form-check-inline">
                             {% if stat in selectedstats %}
@@ -157,9 +160,9 @@
 <script type="text/javascript">
     $(document).ready(function () {
         hiddenFormNode = document.querySelector("#scrollPos")
-        if ({{ scrollPos }}) {
-            hiddenFormNode.value = {{ scrollPos }}
-            $(window).scrollTop({{ scrollPos }});
+        if (hiddenFormNode.value) {
+            // hiddenFormNode.value = hiddenFormNode.value;
+            $(window).scrollTop(hiddenFormNode.value);
         }
         $(window).on("scroll", function() {
             hiddenFormNode.value=$(window).scrollTop()

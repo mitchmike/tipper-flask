@@ -3,6 +3,8 @@ from flask_session import Session
 from tempfile import mkdtemp
 import re
 import requests
+import time
+import random
 from dotenv import load_dotenv
 import os
 from helpers import login_required, formatpcnt
@@ -20,6 +22,32 @@ app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.jinja_env.filters["formatpcnt"] = formatpcnt
 
 restEndpoint = os.environ.get('REST_ENDPOINT')
+
+
+
+TEAMMAP = {
+  'Brisbane Lions':'brisbanel',
+  'Hawthorn Hawks':'hawthorn',
+  'Collingwood Magpies':'collingwood',
+  'Fremantle Dockers':'fremantle',
+  'Carlton Blues':'carlton',
+  'Essendon Bombers':'essendon',
+  'Geelong Cats':'geelong',
+  'Sydney Swans':'swans',
+  'Greater Western Sydney Giants':'gws',
+  'Gold Coast Suns':'goldcoast',
+  'Adelaide Crows':'adelaide',
+  'Melbourne Demons':'melbourne',
+  'Richmond Tigers':'richmond',
+  'North Melbourne Kangaroos':'kangaroos',
+  'St Kilda Saints':'stkilda',
+  'Port Adelaide Power':'padelaide',
+  'Western Bulldogs':'bullldogs',
+  'West Coast Eagles':'westcoast'
+};
+
+
+
 
 # Ensure responses aren't cached
 @app.after_request
@@ -176,6 +204,7 @@ def teamdetail():
         data.append(series)
 
     # to remember location on page when looking at stats
+    scrollPos = ""
     scrollPos = request.form.get("scrollPos")
     return render_template("teamdetail.html", 
                             team=team,games=games,pcntdiffs=data,
@@ -190,5 +219,50 @@ def teamdetail():
 @app.route('/tip')
 @login_required
 def tip():
-    return render_template("tip.html")
+    
+    # TODO: select other rounds and get odds for those
+    # if request.method == 'GET':
+    #     selectedSeason = request.args.get('selectedSeason')
+    #     if not selectedSeason:
+    #         selectedSeason='2021'
+    #     selectedRound=7
+    #     return render_template('tip.html', selectedSeason=selectedSeason, selectedRound=selectedRound)
+
+
+    # deactivated for testing/dev so i dont use all allocated requests
+    # odds = requests.get(f'{restEndpoint}/oddsNextWeek').json()
+
+
+    odds=[{'id': 'f6584a8eaefa10f6349fc2514991a757', 'sport_key': 'aussierules_afl', 'sport_nice': 'AFL', 'teams': ['Melbourne Demons', 'North Melbourne Kangaroos'], 'commence_time': 1619925000, 'home_team': 'North Melbourne Kangaroos', 'sites': [{'site_key': 'sportsbet', 'site_nice': 'SportsBet', 'last_update': 1619907068, 'odds': {'h2h': [1.02, 13]}}, {'site_key': 'tab', 'site_nice': 'TAB', 'last_update': 1619906851, 'odds': {'h2h': [1.01, 14]}}, {'site_key': 'betfair', 'site_nice': 'Betfair', 'last_update': 1619906852, 'odds': {'h2h': [1.05, 17.5], 'h2h_lay': [1.06, 19]}}, {'site_key': 'ladbrokes', 'site_nice': 'Ladbrokes', 'last_update': 1619906852, 'odds': {'h2h': [1.02, 15]}}, {'site_key': 'neds', 'site_nice': 'Neds', 'last_update': 1619906852, 'odds': {'h2h': [1.02, 15]}}, {'site_key': 'pointsbetau', 'site_nice': 'PointsBet (AU)', 'last_update': 1619907087, 'odds': {'h2h': [1.01, 17]}}, {'site_key': 'unibet', 'site_nice': 'Unibet', 'last_update': 1619906852, 'odds': {'h2h': [1.01, 14]}}], 'sites_count': 7}, {'id': 'b98fd17b96a8109ec312e46f57c98c9a', 'sport_key': 'aussierules_afl', 'sport_nice': 'AFL', 'teams': ['Carlton Blues', 'Essendon Bombers'], 'commence_time': 1619932800, 'home_team': 'Essendon Bombers', 'sites': [{'site_key': 'sportsbet', 'site_nice': 'SportsBet', 'last_update': 1619907068, 'odds': {'h2h': [1.81, 2.04]}}, {'site_key': 'tab', 'site_nice': 'TAB', 'last_update': 1619906851, 'odds': {'h2h': [1.77, 2.05]}}, {'site_key': 'betfair', 'site_nice': 'Betfair', 'last_update': 1619906852, 'odds': {'h2h': [1.84, 2.16], 'h2h_lay': [1.85, 2.18]}}, {'site_key': 'ladbrokes', 'site_nice': 'Ladbrokes', 'last_update': 1619906852, 'odds': {'h2h': [1.75, 2.1]}}, {'site_key': 'neds', 'site_nice': 'Neds', 'last_update': 1619906852, 'odds': {'h2h': [1.75, 2.1]}}, {'site_key': 'pointsbetau', 'site_nice': 'PointsBet (AU)', 'last_update': 1619907087, 'odds': {'h2h': [1.77, 2.05]}}, {'site_key': 'unibet', 'site_nice': 'Unibet', 'last_update': 1619906852, 'odds': {'h2h': [1.77, 2.06]}}], 'sites_count': 7}, {'id': '8ba3aab2aba5f3e312675a074673d044', 'sport_key': 'aussierules_afl', 'sport_nice': 'AFL', 'teams': ['Fremantle Dockers', 'West Coast Eagles'], 'commence_time': 1619937600, 'home_team': 'West Coast Eagles', 'sites': [{'site_key': 'unibet', 'site_nice': 'Unibet', 'last_update': 1619906852, 'odds': {'h2h': [1.96, 1.84]}}, {'site_key': 'ladbrokes', 'site_nice': 'Ladbrokes', 'last_update': 1619906852, 'odds': {'h2h': [2.05, 1.77]}}, {'site_key': 'neds', 'site_nice': 'Neds', 'last_update': 1619906852, 'odds': {'h2h': [2.05, 1.77]}}, {'site_key': 'betfair', 'site_nice': 'Betfair', 'last_update': 1619906852, 'odds': {'h2h': [2.04, 1.95], 'h2h_lay': [2.06, 1.96]}}, {'site_key': 'tab', 'site_nice': 'TAB', 'last_update': 1619906851, 'odds': {'h2h': [2, 1.8]}}, {'site_key': 'sportsbet', 'site_nice': 'SportsBet', 'last_update': 1619907068, 'odds': {'h2h': [2.05, 1.8]}}, {'site_key': 'pointsbetau', 'site_nice': 'PointsBet (AU)', 'last_update': 1619907087, 'odds': {'h2h': [1.95, 1.85]}}], 'sites_count': 7}]
+    print(odds)
+    gameList=[]
+    for game in odds:
+        gameDict={'id':game['id'],
+                'team1':game['teams'][0],
+                'team2':game['teams'][1]}
+        gameDict['commence_time'] = time.strftime('%A %d %B %Y %H:%M:%S', time.localtime(game['commence_time']))
+        gameList.append(gameDict)
+
+    print(gameList)
+
+    selectedGameID = request.args.get('game')
+    selectedGame = next((x for x in odds if x['id'] == selectedGameID),None)
+    if selectedGame:     
+        for site in selectedGame['sites']:
+            site.update(last_update=time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(site['last_update'])))
+
+        tipperScore = random.random()
+        teamscores=[tipperScore,1-tipperScore]
+        selectedGame.update(teamscores=teamscores)
+
+        teamIds=[
+            TEAMMAP[selectedGame['teams'][0]],
+            TEAMMAP[selectedGame['teams'][1]]
+        ]
+        selectedGame.update(teamIds=teamIds)
+
+        print(selectedGame)
+
+
+    return render_template("tip.html",selectedGame=selectedGame,gameList=gameList,odds=odds)
 

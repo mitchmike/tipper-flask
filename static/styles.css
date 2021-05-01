@@ -1,7 +1,7 @@
-.row .col-sm:hover {
+#indexmenu .row .col-sm:hover {
     background-color: aliceblue;
 }
-.row .col-sm {
+#indexmenu .row .col-sm {
     background-color: rgb(233, 245, 255);
 }
 
@@ -37,9 +37,7 @@ main {
     color: rgb(236, 113, 113);
 }
 
-.jumbotron {
-    background-color: #cbd1d6!important;
-}
+
 
 .statcheckboxes {
     padding:10px;
@@ -52,6 +50,14 @@ main {
     flex-wrap: wrap;
     margin: auto;
 }
+
+#tipfilter {
+    max-width: 500px;
+    margin: auto;
+    padding: 10px;
+    border-radius: 10px;
+}
+
 
 #richmond:hover {
     color: black;

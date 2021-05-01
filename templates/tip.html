@@ -5,5 +5,125 @@ Tip
 {% endblock %}
 
 {% block main %}
-Tip
+<div class="container">
+    <!-- TODO: enable search for different rounds odds -->
+    <!-- <div class='row'>
+        <div class='col-sm' id='tipfilter'>
+        <form action="/tip" method="post">
+            <div class="form-group">
+                <label>Season: </label>
+                <select required autocomplete="off" class="form-control" name="season"  placeholder="Season" style="vertical-align:middle">
+                    <option disabled selected value="">Season</option>
+                    {% for s in ['2019','2020','2021'] %}
+                        {% if s == selectedSeason %}
+                            <option selected value="{{ s }}">{{ s }}</option>
+                        {% else %}
+                            <option value="{{ s }}">{{ s }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                <label>Season: </label>
+                <select required autocomplete="off" class="form-control" name="round"  placeholder="Round" style="vertical-align:middle">
+                    <option disabled selected value="">Round</option>
+                    {% for r in range(1,19) %}
+                        {% if r == selectedRound %}
+                            <option selected value="{{ r }}">{{ r }}</option>
+                        {% else %}
+                            <option value="{{ r }}">{{ r }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-primary">Show Games</button>
+            </div>    
+        </form>
+        </div>
+    </div> -->
+    <div class="row justify-content-start">
+    <h1 class="display-5 ">Tip</h1>
+    </div>
+    <hr/>
+    <br/>
+    {% if gameList %}
+        <div class='row'>
+            <div class='col-xs' id='gameList'>
+                <table class="table table-hover" style="max-width: 1100px; margin:auto">
+                    <thead class="thead-dark">
+                        <tr><th colspan="5"><h1>Upcoming Games</h1></th></tr>
+                    </thead>
+                    {% for game in gameList %}
+                        
+                            <tr id={{game.id}} class="clickable-row" style="cursor: pointer;" data-href="/tip?game={{game.id}}">
+                                <td>
+                                    {{game.team1}} v. {{ game.team2 }}
+                                    <br/>
+                                    {{ game.commence_time }}
+                                </td>
+                            </tr>
+                        
+                    {% endfor %}
+                    
+                </table>
+
+            </div>
+        
+    
+        {% if selectedGame %}
+            <div class='col-lg' style="margin-left: 30px;">
+                <h1 class="display-5">Tipper Score</h1>
+                <div class="row">
+                    {% for ti in range(2) %}
+                        {% if ti == 0 %}
+                        <div class="col d-flex justify-content-end align-items-center">
+                        {% else %}
+                        <div class="col d-flex justify-content-start align-items-center">
+                        {% endif %}
+                            <div class="card" style="border:0px;">
+                                <img class="card-img-top" style="width: 180px; margin:auto; " src="/static/logos/{{ selectedGame.teamIds[ti] }}.png" alt="{{ selectedGame.teamIds[ti] }}">
+                                <div class="card-body">
+                                <h5 class="card-title">{{ selectedGame.teams[ti] }}</h5>
+                                <p class="card-text"><strong>Tipper Score: </strong>{{ selectedGame.teamscores[ti] }}</p>
+                                <a href="/teamdetail?team={{ selectedGame.teamIds[ti] }}" class="btn btn-primary">See Team Stats</a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <h1 class="display-5">Odds</h1>
+                <br/>
+                <table class="table table-hover table-sm">
+                    <thead>
+                        <tr>
+                            <th>Provider</th>
+                            <th>{{ selectedGame.teams[0] }}</th>
+                            <th>{{ selectedGame.teams[1] }}</th>
+                            <th>Last Updated</th>
+                        </tr>
+                        {% for site in selectedGame.sites %}
+                        <tr>
+                            <td>{{ site.site_nice }}</td>
+                            <td>{{ site.odds.h2h[0] }}</td>
+                            <td>{{ site.odds.h2h[1] }}</td>
+                            <td>{{ site.last_update }}</td>
+                        </tr>
+                        {% endfor %}
+                        
+                    </thead>
+                    <tr></tr>
+                </table>
+
+            </div>
+        {% endif %}
+        </div>
+    
+    {% endif %}
+    
+
+</div>
+<script>
+    $(".clickable-row").click(function () {
+        window.location = $(this).data('href');
+    });
+    
+</script>
 {% endblock %}
