@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% block titleblock %}
+{% block title %}
 Tip
 {% endblock %}
 
@@ -48,7 +48,7 @@ Tip
             <div class='col-xs' id='gameList'>
                 <table class="table table-hover" style="max-width: 1100px; margin:auto">
                     <thead class="thead-dark">
-                        <tr><th colspan="5"><h1>Upcoming Games</h1></th></tr>
+                        <tr><th colspan="5"><h1 class="display-5">Upcoming Games</h1></th></tr>
                     </thead>
                     {% for game in gameList %}
                         
@@ -68,8 +68,9 @@ Tip
         
     
         {% if selectedGame %}
-            <div class='col-lg' style="margin-left: 30px;">
+            <div class='col-lg' id='tipbody' >
                 <h1 class="display-5">Tipper Score</h1>
+                <br/>
                 <div class="row">
                     {% for ti in range(2) %}
                         {% if ti == 0 %}

@@ -252,7 +252,7 @@ def tip():
             site.update(last_update=time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(site['last_update'])))
 
         tipperScore = random.random()
-        teamscores=[tipperScore,1-tipperScore]
+        teamscores=["{:.3f}".format(tipperScore),"{:.3f}".format(1-tipperScore)]
         selectedGame.update(teamscores=teamscores)
 
         teamIds=[

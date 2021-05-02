@@ -58,6 +58,13 @@ main {
     border-radius: 10px;
 }
 
+@media (min-width: 992px) {
+    #tipbody {
+        margin-left: 30px;
+        border-left: 1px solid rgba(0,0,0,.1);
+    }
+}
+
 
 #richmond:hover {
     color: black;
