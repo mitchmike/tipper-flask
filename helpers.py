@@ -12,9 +12,9 @@ def login_required(f):
     def decorated_function(*args, **kwargs):
         if session.get("user_id") is None:
 
-            #temporarily login user
-            session["user_id"] = 3
-            return redirect("/")
+            # #temporarily login user
+            # session["user_id"] = 3
+            # return redirect("/")
 
             return redirect("/login")
         return f(*args, **kwargs)

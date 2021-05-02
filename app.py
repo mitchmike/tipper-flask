@@ -136,7 +136,7 @@ def ladder():
     #default season to 2020
     if not season:
         season = '2020'
-        
+    
     teams = requests.get(f'{restEndpoint}/teams').json()
     ladder = requests.get(f'{restEndpoint}/ladder/{season}').json()
 
@@ -230,11 +230,8 @@ def tip():
 
 
     # deactivated for testing/dev so i dont use all allocated requests
-    # odds = requests.get(f'{restEndpoint}/oddsNextWeek').json()
-
-
-    odds=[{'id': 'f6584a8eaefa10f6349fc2514991a757', 'sport_key': 'aussierules_afl', 'sport_nice': 'AFL', 'teams': ['Melbourne Demons', 'North Melbourne Kangaroos'], 'commence_time': 1619925000, 'home_team': 'North Melbourne Kangaroos', 'sites': [{'site_key': 'sportsbet', 'site_nice': 'SportsBet', 'last_update': 1619907068, 'odds': {'h2h': [1.02, 13]}}, {'site_key': 'tab', 'site_nice': 'TAB', 'last_update': 1619906851, 'odds': {'h2h': [1.01, 14]}}, {'site_key': 'betfair', 'site_nice': 'Betfair', 'last_update': 1619906852, 'odds': {'h2h': [1.05, 17.5], 'h2h_lay': [1.06, 19]}}, {'site_key': 'ladbrokes', 'site_nice': 'Ladbrokes', 'last_update': 1619906852, 'odds': {'h2h': [1.02, 15]}}, {'site_key': 'neds', 'site_nice': 'Neds', 'last_update': 1619906852, 'odds': {'h2h': [1.02, 15]}}, {'site_key': 'pointsbetau', 'site_nice': 'PointsBet (AU)', 'last_update': 1619907087, 'odds': {'h2h': [1.01, 17]}}, {'site_key': 'unibet', 'site_nice': 'Unibet', 'last_update': 1619906852, 'odds': {'h2h': [1.01, 14]}}], 'sites_count': 7}, {'id': 'b98fd17b96a8109ec312e46f57c98c9a', 'sport_key': 'aussierules_afl', 'sport_nice': 'AFL', 'teams': ['Carlton Blues', 'Essendon Bombers'], 'commence_time': 1619932800, 'home_team': 'Essendon Bombers', 'sites': [{'site_key': 'sportsbet', 'site_nice': 'SportsBet', 'last_update': 1619907068, 'odds': {'h2h': [1.81, 2.04]}}, {'site_key': 'tab', 'site_nice': 'TAB', 'last_update': 1619906851, 'odds': {'h2h': [1.77, 2.05]}}, {'site_key': 'betfair', 'site_nice': 'Betfair', 'last_update': 1619906852, 'odds': {'h2h': [1.84, 2.16], 'h2h_lay': [1.85, 2.18]}}, {'site_key': 'ladbrokes', 'site_nice': 'Ladbrokes', 'last_update': 1619906852, 'odds': {'h2h': [1.75, 2.1]}}, {'site_key': 'neds', 'site_nice': 'Neds', 'last_update': 1619906852, 'odds': {'h2h': [1.75, 2.1]}}, {'site_key': 'pointsbetau', 'site_nice': 'PointsBet (AU)', 'last_update': 1619907087, 'odds': {'h2h': [1.77, 2.05]}}, {'site_key': 'unibet', 'site_nice': 'Unibet', 'last_update': 1619906852, 'odds': {'h2h': [1.77, 2.06]}}], 'sites_count': 7}, {'id': '8ba3aab2aba5f3e312675a074673d044', 'sport_key': 'aussierules_afl', 'sport_nice': 'AFL', 'teams': ['Fremantle Dockers', 'West Coast Eagles'], 'commence_time': 1619937600, 'home_team': 'West Coast Eagles', 'sites': [{'site_key': 'unibet', 'site_nice': 'Unibet', 'last_update': 1619906852, 'odds': {'h2h': [1.96, 1.84]}}, {'site_key': 'ladbrokes', 'site_nice': 'Ladbrokes', 'last_update': 1619906852, 'odds': {'h2h': [2.05, 1.77]}}, {'site_key': 'neds', 'site_nice': 'Neds', 'last_update': 1619906852, 'odds': {'h2h': [2.05, 1.77]}}, {'site_key': 'betfair', 'site_nice': 'Betfair', 'last_update': 1619906852, 'odds': {'h2h': [2.04, 1.95], 'h2h_lay': [2.06, 1.96]}}, {'site_key': 'tab', 'site_nice': 'TAB', 'last_update': 1619906851, 'odds': {'h2h': [2, 1.8]}}, {'site_key': 'sportsbet', 'site_nice': 'SportsBet', 'last_update': 1619907068, 'odds': {'h2h': [2.05, 1.8]}}, {'site_key': 'pointsbetau', 'site_nice': 'PointsBet (AU)', 'last_update': 1619907087, 'odds': {'h2h': [1.95, 1.85]}}], 'sites_count': 7}]
-    print(odds)
+    odds = requests.get(f'{restEndpoint}/oddsNextWeek').json()
+    # odds=[{'id': 'f6584a8eaefa10f6349fc2514991a757', 'sport_key': 'aussierules_afl', 'sport_nice': 'AFL', 'teams': ['Melbourne Demons', 'North Melbourne Kangaroos'], 'commence_time': 1619925000, 'home_team': 'North Melbourne Kangaroos', 'sites': [{'site_key': 'sportsbet', 'site_nice': 'SportsBet', 'last_update': 1619907068, 'odds': {'h2h': [1.02, 13]}}, {'site_key': 'tab', 'site_nice': 'TAB', 'last_update': 1619906851, 'odds': {'h2h': [1.01, 14]}}, {'site_key': 'betfair', 'site_nice': 'Betfair', 'last_update': 1619906852, 'odds': {'h2h': [1.05, 17.5], 'h2h_lay': [1.06, 19]}}, {'site_key': 'ladbrokes', 'site_nice': 'Ladbrokes', 'last_update': 1619906852, 'odds': {'h2h': [1.02, 15]}}, {'site_key': 'neds', 'site_nice': 'Neds', 'last_update': 1619906852, 'odds': {'h2h': [1.02, 15]}}, {'site_key': 'pointsbetau', 'site_nice': 'PointsBet (AU)', 'last_update': 1619907087, 'odds': {'h2h': [1.01, 17]}}, {'site_key': 'unibet', 'site_nice': 'Unibet', 'last_update': 1619906852, 'odds': {'h2h': [1.01, 14]}}], 'sites_count': 7}, {'id': 'b98fd17b96a8109ec312e46f57c98c9a', 'sport_key': 'aussierules_afl', 'sport_nice': 'AFL', 'teams': ['Carlton Blues', 'Essendon Bombers'], 'commence_time': 1619932800, 'home_team': 'Essendon Bombers', 'sites': [{'site_key': 'sportsbet', 'site_nice': 'SportsBet', 'last_update': 1619907068, 'odds': {'h2h': [1.81, 2.04]}}, {'site_key': 'tab', 'site_nice': 'TAB', 'last_update': 1619906851, 'odds': {'h2h': [1.77, 2.05]}}, {'site_key': 'betfair', 'site_nice': 'Betfair', 'last_update': 1619906852, 'odds': {'h2h': [1.84, 2.16], 'h2h_lay': [1.85, 2.18]}}, {'site_key': 'ladbrokes', 'site_nice': 'Ladbrokes', 'last_update': 1619906852, 'odds': {'h2h': [1.75, 2.1]}}, {'site_key': 'neds', 'site_nice': 'Neds', 'last_update': 1619906852, 'odds': {'h2h': [1.75, 2.1]}}, {'site_key': 'pointsbetau', 'site_nice': 'PointsBet (AU)', 'last_update': 1619907087, 'odds': {'h2h': [1.77, 2.05]}}, {'site_key': 'unibet', 'site_nice': 'Unibet', 'last_update': 1619906852, 'odds': {'h2h': [1.77, 2.06]}}], 'sites_count': 7}, {'id': '8ba3aab2aba5f3e312675a074673d044', 'sport_key': 'aussierules_afl', 'sport_nice': 'AFL', 'teams': ['Fremantle Dockers', 'West Coast Eagles'], 'commence_time': 1619937600, 'home_team': 'West Coast Eagles', 'sites': [{'site_key': 'unibet', 'site_nice': 'Unibet', 'last_update': 1619906852, 'odds': {'h2h': [1.96, 1.84]}}, {'site_key': 'ladbrokes', 'site_nice': 'Ladbrokes', 'last_update': 1619906852, 'odds': {'h2h': [2.05, 1.77]}}, {'site_key': 'neds', 'site_nice': 'Neds', 'last_update': 1619906852, 'odds': {'h2h': [2.05, 1.77]}}, {'site_key': 'betfair', 'site_nice': 'Betfair', 'last_update': 1619906852, 'odds': {'h2h': [2.04, 1.95], 'h2h_lay': [2.06, 1.96]}}, {'site_key': 'tab', 'site_nice': 'TAB', 'last_update': 1619906851, 'odds': {'h2h': [2, 1.8]}}, {'site_key': 'sportsbet', 'site_nice': 'SportsBet', 'last_update': 1619907068, 'odds': {'h2h': [2.05, 1.8]}}, {'site_key': 'pointsbetau', 'site_nice': 'PointsBet (AU)', 'last_update': 1619907087, 'odds': {'h2h': [1.95, 1.85]}}], 'sites_count': 7}]
     gameList=[]
     for game in odds:
         gameDict={'id':game['id'],
@@ -242,8 +239,6 @@ def tip():
                 'team2':game['teams'][1]}
         gameDict['commence_time'] = time.strftime('%A %d %B %Y %H:%M:%S', time.localtime(game['commence_time']))
         gameList.append(gameDict)
-
-    print(gameList)
 
     selectedGameID = request.args.get('game')
     selectedGame = next((x for x in odds if x['id'] == selectedGameID),None)
@@ -260,9 +255,6 @@ def tip():
             TEAMMAP[selectedGame['teams'][1]]
         ]
         selectedGame.update(teamIds=teamIds)
-
-        print(selectedGame)
-
 
     return render_template("tip.html",selectedGame=selectedGame,gameList=gameList,odds=odds)
 
