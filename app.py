@@ -21,8 +21,8 @@ Session(app)
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 app.jinja_env.filters["formatpcnt"] = formatpcnt
 
-restEndpoint = os.environ.get('REST_ENDPOINT')
-
+restEndpoint = os.environ.get('TIPPER_BACKEND_ENDPOINT')
+tipperMLEP = os.environ.get('TIPPER_ML_ENDPOINT')
 
 
 TEAMMAP = {
@@ -135,7 +135,7 @@ def ladder():
     season = request.form.get('season')
     #default season to 2020
     if not season:
-        season = '2020'
+        season = '2021'
     
     teams = requests.get(f'{restEndpoint}/teams').json()
     ladder = requests.get(f'{restEndpoint}/ladder/{season}').json()
@@ -246,15 +246,20 @@ def tip():
         for site in selectedGame['sites']:
             site.update(last_update=time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(site['last_update'])))
 
-        tipperScore = random.random()
-        teamscores=["{:.3f}".format(tipperScore),"{:.3f}".format(1-tipperScore)]
-        selectedGame.update(teamscores=teamscores)
-
         teamIds=[
             TEAMMAP[selectedGame['teams'][0]],
             TEAMMAP[selectedGame['teams'][1]]
         ]
         selectedGame.update(teamIds=teamIds)
+
+        try:
+            prediction = requests.get(f'{tipperMLEP}/predict/linearregression_pcntdiffstats/{teamIds[0]}/{teamIds[1]}/weighted/0.2').json()
+            print(prediction)
+            tipperScore = [prediction['team1score'],prediction['team2score']]
+            teamscores=["{:.3f}".format(tipperScore[0]),"{:.3f}".format(tipperScore[1])]
+            selectedGame.update(teamscores=teamscores)
+        except:
+            return render_template('failure.html',text='could not fetch prediction')
 
     return render_template("tip.html",selectedGame=selectedGame,gameList=gameList,odds=odds)
 

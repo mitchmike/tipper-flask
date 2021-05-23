@@ -61,8 +61,10 @@
     <script>
         function activeLink() {
             let path = window.location.pathname.split('/').pop()
-            var al = document.querySelector(`a#${path}`)
-            al.classList.add('active')
+            if (path) {
+                var al = document.querySelector(`a#${path}`)
+                al.classList.add('active')
+            }          
         }
 
         document.addEventListener('DOMContentLoaded', activeLink);
