@@ -1,13 +1,11 @@
-from flask import Flask, render_template,  request, session, redirect, g, json
+from flask import Flask, render_template, request, session, redirect
 from flask_session import Session
 from tempfile import mkdtemp
-import re
 import requests
 import time
-import random
 from dotenv import load_dotenv
 import os
-from helpers import login_required, formatpcnt
+from helpers import login_required, format_pcnt
 
 load_dotenv()
 
@@ -19,34 +17,31 @@ Session(app)
 
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
-app.jinja_env.filters["formatpcnt"] = formatpcnt
+app.jinja_env.filters["formatpcnt"] = format_pcnt
 
 restEndpoint = os.environ.get('TIPPER_BACKEND_ENDPOINT')
 tipperMLEP = os.environ.get('TIPPER_ML_ENDPOINT')
 
-
 TEAMMAP = {
-  'Brisbane Lions':'brisbanel',
-  'Hawthorn Hawks':'hawthorn',
-  'Collingwood Magpies':'collingwood',
-  'Fremantle Dockers':'fremantle',
-  'Carlton Blues':'carlton',
-  'Essendon Bombers':'essendon',
-  'Geelong Cats':'geelong',
-  'Sydney Swans':'swans',
-  'Greater Western Sydney Giants':'gws',
-  'Gold Coast Suns':'goldcoast',
-  'Adelaide Crows':'adelaide',
-  'Melbourne Demons':'melbourne',
-  'Richmond Tigers':'richmond',
-  'North Melbourne Kangaroos':'kangaroos',
-  'St Kilda Saints':'stkilda',
-  'Port Adelaide Power':'padelaide',
-  'Western Bulldogs':'bullldogs',
-  'West Coast Eagles':'westcoast'
-};
-
-
+    'Brisbane Lions': 'brisbanel',
+    'Hawthorn Hawks': 'hawthorn',
+    'Collingwood Magpies': 'collingwood',
+    'Fremantle Dockers': 'fremantle',
+    'Carlton Blues': 'carlton',
+    'Essendon Bombers': 'essendon',
+    'Geelong Cats': 'geelong',
+    'Sydney Swans': 'swans',
+    'Greater Western Sydney Giants': 'gws',
+    'Gold Coast Suns': 'goldcoast',
+    'Adelaide Crows': 'adelaide',
+    'Melbourne Demons': 'melbourne',
+    'Richmond Tigers': 'richmond',
+    'North Melbourne Kangaroos': 'kangaroos',
+    'St Kilda Saints': 'stkilda',
+    'Port Adelaide Power': 'padelaide',
+    'Western Bulldogs': 'bullldogs',
+    'West Coast Eagles': 'westcoast'
+}
 
 
 # Ensure responses aren't cached
@@ -57,6 +52,7 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
+
 # about tipper
 @app.route('/')
 @login_required
@@ -64,103 +60,99 @@ def index():
     return render_template("index.html")
 
 
-@app.route('/login', methods=["GET","POST"])
+@app.route('/login', methods=["GET", "POST"])
 def login():
-    if request.method=="GET":
+    if request.method == "GET":
         return render_template("login.html")
     # otherwise post login details
-    error=''
+    error = ''
     username = request.form.get('username')
     password = request.form.get('password')
-    
+
     if not username:
-        error='username not provided'
-        return render_template('login.html',error=error)
+        error = 'username not provided'
+        return render_template('login.html', error=error)
     if not password:
-        error='password not provided'
-        return render_template('login.html',error=error)
-    
-    #call signin endpoint on rest api
-    res = requests.post(f'{restEndpoint}/signin',data={'email':username,'password':password}).json()
+        error = 'password not provided'
+        return render_template('login.html', error=error)
+    # call signin endpoint on rest api
+    res = requests.post(f'{restEndpoint}/signin', data={'email': username, 'password': password}).json()
 
     if "id" in res:
         session["user_id"] = res['id']
         return redirect('/')
     else:
-        error=res['msg']
+        error = res['msg']
     # if creds invalid, redirect to login with GET and error message
     return render_template('login.html', error=error)
-    
+
+
 @app.route('/logout')
 @login_required
 def logout():
     session.clear()
     return redirect('/')
 
+
 @app.route('/register', methods=["GET", "POST"])
 def register():
-    if request.method=="GET":
+    if request.method == "GET":
         return render_template("register.html")
 
     username = request.form.get('username')
     password = request.form.get('password')
-    repassword = request.form.get('repassword')
+    re_password = request.form.get('repassword')
     if not username:
-        return render_template('register.html',error="username not provided")
+        return render_template('register.html', error="username not provided")
     if not password:
-        return render_template('register.html',error="password not provided")
-    if not repassword:
-        return render_template('register.html',error="repassword not provided")
-    if not password == repassword:
-        return render_template('register.html',error="passwords dont match")
+        return render_template('register.html', error="password not provided")
+    if not re_password:
+        return render_template('register.html', error="repassword not provided")
+    if not password == re_password:
+        return render_template('register.html', error="passwords dont match")
 
-    #call register endpoint on rest api
-    res = requests.post(f'{restEndpoint}/register',data={'email':username,'password':password}).json()
-    
+    # call register endpoint on rest api
+    res = requests.post(f'{restEndpoint}/register', data={'email': username, 'password': password}).json()
+
     if "id" in res:
         session["user_id"] = res['id']
         return redirect('/')
     else:
-        error=res['msg']
+        error = res['msg']
     # if creds invalid, redirect to login with GET and error message
     return render_template('register.html', error=error)
 
-    
 
 # list of teams. can sort as ladder, can drill down to view their games / stats
-@app.route('/ladder', methods=['GET','POST'])
+@app.route('/ladder', methods=['GET', 'POST'])
 @login_required
 def ladder():
-    
     season = request.form.get('season')
-    #default season to 2020
+    # default season to 2020
     if not season:
         season = '2021'
-    
+
     teams = requests.get(f'{restEndpoint}/teams').json()
     ladder = requests.get(f'{restEndpoint}/ladder/{season}').json()
 
     for team in ladder:
-        #look for team_identifier
-        detail = next((x for x in teams if x['team_identifier'] == team['teamname']),None)
+        # look for team_identifier
+        detail = next((x for x in teams if x['team_identifier'] == team['teamname']), None)
         team['fullname'] = f"{detail['city']} {detail['name']}"
-    return render_template('ladder.html',ladder=ladder, season=season)
+    return render_template('ladder.html', ladder=ladder, season=season)
 
 
-
-@app.route('/teamdetail',methods=['GET','POST'])
+@app.route('/teamdetail', methods=['GET', 'POST'])
 @login_required
 def teamdetail():
-    
-    
     # team is required for teamdetail. 
-    if request.method=='GET':
+    if request.method == 'GET':
         team = request.args.get('team')
     else:
         team = request.form.get('team')
     if not team:
         teams = requests.get(f'{restEndpoint}/teams').json()
-        return render_template("teamdetail.html",teamslist=teams)
+        return render_template("teamdetail.html", teamslist=teams)
 
     # recent games data
     games = requests.get(f'{restEndpoint}/games/byyearandteam/{team}/2020').json()
@@ -175,51 +167,46 @@ def teamdetail():
         else:
             winner = game['opponent']
         game['winner'] = winner
-    
-    # chart
-    # get raw data for chart
-    pcntdiffStats = requests.post(f'{restEndpoint}/pcntDiff/',data={'team':team, 'yearStart':2020,'yearEnd':2020}).json()
-    availablestats = [item for item in list(pcntdiffStats[0].keys()) if item not in [
-        'team_id','opponent','year','round'
-        ]]
 
-    selectedstats=request.form.getlist('stat')
-    if not selectedstats:
-        #default selected stats
-        selectedstats=['disposals']
+    # get raw data for chart
+    pcnt_diff_stats = requests.post(f'{restEndpoint}/pcntDiff/',
+                                    data={'team': team, 'yearStart': 2020, 'yearEnd': 2020}).json()
+    available_stats = [item for item in list(pcnt_diff_stats[0].keys()) if item not in [
+        'team_id', 'opponent', 'year', 'round'
+    ]]
+
+    selected_stats = request.form.getlist('stat')
+    if not selected_stats:
+        # default selected stats
+        selected_stats = ['disposals']
 
     # populate data for chart
-    data=[]
-    for stat in selectedstats:
-        disposals=[]
+    data = []
+    for stat in selected_stats:
         series = {
-            'type':"line",
+            'type': "line",
             'name': stat,
             'showInLegend': True,
             'markerSize': 0,
-            'dataPoints':[]
+            'dataPoints': []
         }
-        for round in pcntdiffStats:
-            series['dataPoints'].append({'x':round['round'], 'y':round[stat]})
+        for round_number in pcnt_diff_stats:
+            series['dataPoints'].append({'x': round_number['round'], 'y': round_number[stat]})
         data.append(series)
 
     # to remember location on page when looking at stats
-    scrollPos = ""
-    scrollPos = request.form.get("scrollPos")
-    return render_template("teamdetail.html", 
-                            team=team,games=games,pcntdiffs=data,
-                            availablestats=availablestats,selectedstats=selectedstats,
-                            scrollPos=scrollPos
-                        )
-
-    
+    scroll_pos = ""
+    scroll_pos = request.form.get("scrollPos")
+    return render_template("teamdetail.html",
+                           team=team, games=games, pcntdiffs=data,
+                           availablestats=available_stats, selectedstats=selected_stats,
+                           scrollPos=scroll_pos
+                           )
 
 
-# source odds from betting companies and also a random number generator for the probability of winning for a team -> give a tipscore/value score based on that
 @app.route('/tip')
 @login_required
 def tip():
-    
     # TODO: select other rounds and get odds for those
     # if request.method == 'GET':
     #     selectedSeason = request.args.get('selectedSeason')
@@ -228,38 +215,33 @@ def tip():
     #     selectedRound=7
     #     return render_template('tip.html', selectedSeason=selectedSeason, selectedRound=selectedRound)
 
-
-    # deactivated for testing/dev so i dont use all allocated requests
     odds = requests.get(f'{restEndpoint}/oddsNextWeek').json()
-    # odds=[{'id': 'f6584a8eaefa10f6349fc2514991a757', 'sport_key': 'aussierules_afl', 'sport_nice': 'AFL', 'teams': ['Melbourne Demons', 'North Melbourne Kangaroos'], 'commence_time': 1619925000, 'home_team': 'North Melbourne Kangaroos', 'sites': [{'site_key': 'sportsbet', 'site_nice': 'SportsBet', 'last_update': 1619907068, 'odds': {'h2h': [1.02, 13]}}, {'site_key': 'tab', 'site_nice': 'TAB', 'last_update': 1619906851, 'odds': {'h2h': [1.01, 14]}}, {'site_key': 'betfair', 'site_nice': 'Betfair', 'last_update': 1619906852, 'odds': {'h2h': [1.05, 17.5], 'h2h_lay': [1.06, 19]}}, {'site_key': 'ladbrokes', 'site_nice': 'Ladbrokes', 'last_update': 1619906852, 'odds': {'h2h': [1.02, 15]}}, {'site_key': 'neds', 'site_nice': 'Neds', 'last_update': 1619906852, 'odds': {'h2h': [1.02, 15]}}, {'site_key': 'pointsbetau', 'site_nice': 'PointsBet (AU)', 'last_update': 1619907087, 'odds': {'h2h': [1.01, 17]}}, {'site_key': 'unibet', 'site_nice': 'Unibet', 'last_update': 1619906852, 'odds': {'h2h': [1.01, 14]}}], 'sites_count': 7}, {'id': 'b98fd17b96a8109ec312e46f57c98c9a', 'sport_key': 'aussierules_afl', 'sport_nice': 'AFL', 'teams': ['Carlton Blues', 'Essendon Bombers'], 'commence_time': 1619932800, 'home_team': 'Essendon Bombers', 'sites': [{'site_key': 'sportsbet', 'site_nice': 'SportsBet', 'last_update': 1619907068, 'odds': {'h2h': [1.81, 2.04]}}, {'site_key': 'tab', 'site_nice': 'TAB', 'last_update': 1619906851, 'odds': {'h2h': [1.77, 2.05]}}, {'site_key': 'betfair', 'site_nice': 'Betfair', 'last_update': 1619906852, 'odds': {'h2h': [1.84, 2.16], 'h2h_lay': [1.85, 2.18]}}, {'site_key': 'ladbrokes', 'site_nice': 'Ladbrokes', 'last_update': 1619906852, 'odds': {'h2h': [1.75, 2.1]}}, {'site_key': 'neds', 'site_nice': 'Neds', 'last_update': 1619906852, 'odds': {'h2h': [1.75, 2.1]}}, {'site_key': 'pointsbetau', 'site_nice': 'PointsBet (AU)', 'last_update': 1619907087, 'odds': {'h2h': [1.77, 2.05]}}, {'site_key': 'unibet', 'site_nice': 'Unibet', 'last_update': 1619906852, 'odds': {'h2h': [1.77, 2.06]}}], 'sites_count': 7}, {'id': '8ba3aab2aba5f3e312675a074673d044', 'sport_key': 'aussierules_afl', 'sport_nice': 'AFL', 'teams': ['Fremantle Dockers', 'West Coast Eagles'], 'commence_time': 1619937600, 'home_team': 'West Coast Eagles', 'sites': [{'site_key': 'unibet', 'site_nice': 'Unibet', 'last_update': 1619906852, 'odds': {'h2h': [1.96, 1.84]}}, {'site_key': 'ladbrokes', 'site_nice': 'Ladbrokes', 'last_update': 1619906852, 'odds': {'h2h': [2.05, 1.77]}}, {'site_key': 'neds', 'site_nice': 'Neds', 'last_update': 1619906852, 'odds': {'h2h': [2.05, 1.77]}}, {'site_key': 'betfair', 'site_nice': 'Betfair', 'last_update': 1619906852, 'odds': {'h2h': [2.04, 1.95], 'h2h_lay': [2.06, 1.96]}}, {'site_key': 'tab', 'site_nice': 'TAB', 'last_update': 1619906851, 'odds': {'h2h': [2, 1.8]}}, {'site_key': 'sportsbet', 'site_nice': 'SportsBet', 'last_update': 1619907068, 'odds': {'h2h': [2.05, 1.8]}}, {'site_key': 'pointsbetau', 'site_nice': 'PointsBet (AU)', 'last_update': 1619907087, 'odds': {'h2h': [1.95, 1.85]}}], 'sites_count': 7}]
-    gameList=[]
+    game_list = []
     for game in odds:
-        gameDict={'id':game['id'],
-                'team1':game['teams'][0],
-                'team2':game['teams'][1]}
-        gameDict['commence_time'] = time.strftime('%A %d %B %Y %H:%M:%S', time.localtime(game['commence_time']))
-        gameList.append(gameDict)
+        game_dict = {'id': game['id'], 'team1': game['teams'][0], 'team2': game['teams'][1],
+                     'commence_time': time.strftime('%A %d %B %Y %H:%M:%S', time.localtime(game['commence_time']))}
+        game_list.append(game_dict)
 
-    selectedGameID = request.args.get('game')
-    selectedGame = next((x for x in odds if x['id'] == selectedGameID),None)
-    if selectedGame:     
-        for site in selectedGame['sites']:
+    selected_game_id = request.args.get('game')
+    selected_game = next((x for x in odds if x['id'] == selected_game_id), None)
+    if selected_game:
+        for site in selected_game['sites']:
             site.update(last_update=time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(site['last_update'])))
 
-        teamIds=[
-            TEAMMAP[selectedGame['teams'][0]],
-            TEAMMAP[selectedGame['teams'][1]]
+        team_ids = [
+            TEAMMAP[selected_game['teams'][0]],
+            TEAMMAP[selected_game['teams'][1]]
         ]
-        selectedGame.update(teamIds=teamIds)
+        selected_game.update(teamIds=team_ids)
 
         try:
-            prediction = requests.get(f'{tipperMLEP}/predict/linearregression_pcntdiffstats/{teamIds[0]}/{teamIds[1]}/weighted/0.2').json()
+            prediction = requests.get(
+                f'{tipperMLEP}/predict/linearregression_pcntdiffstats/{team_ids[0]}/{team_ids[1]}/weighted/0.2').json()
             print(prediction)
-            tipperScore = [prediction['team1score'],prediction['team2score']]
-            teamscores=["{:.3f}".format(tipperScore[0]),"{:.3f}".format(tipperScore[1])]
-            selectedGame.update(teamscores=teamscores)
+            tipper_score = [prediction['team1score'], prediction['team2score']]
+            team_scores = ["{:.3f}".format(tipper_score[0]), "{:.3f}".format(tipper_score[1])]
+            selected_game.update(teamscores=team_scores)
         except:
-            return render_template('failure.html',text='could not fetch prediction')
+            return render_template('failure.html', text='could not fetch prediction')
 
-    return render_template("tip.html",selectedGame=selectedGame,gameList=gameList,odds=odds)
-
+    return render_template("tip.html", selectedGame=selected_game, gameList=game_list, odds=odds)

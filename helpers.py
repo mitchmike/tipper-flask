@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import redirect, session, g
+from flask import redirect, session
 
 
 def login_required(f):
@@ -11,14 +11,10 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get("user_id") is None:
-
-            # #temporarily login user
-            # session["user_id"] = 3
-            # return redirect("/")
-
             return redirect("/login")
         return f(*args, **kwargs)
     return decorated_function
 
-def formatpcnt(value):
+
+def format_pcnt(value):
     return f"{value:,.2f}"

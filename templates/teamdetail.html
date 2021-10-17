@@ -49,25 +49,18 @@
 {{ team }}
 {% endblock %}
 
-
-
-
 {% block main %}
-
 <div class="container" id="teamdetail">
     <div class="row" style="margin: auto;">
         {% if not team %}
         <h1 class="display-4">Choose Team</h1>
-        
         <div class="container teamdetailchoice">
-            
             {% for t in teamslist %}
                 <form href="/teamdetail" method="get" style="padding: 2px;">
                     <input type="hidden" name="team" value="{{t.team_identifier}}" />    
                     <button type="submit" id="{{t.team_identifier}}" class="btn btn-light" >{{ t.city }}</button>
                 </form>
             {% endfor %}
-            
         </div>
         {% else %}
         <div class="col-xs jumbotron" style="margin: auto; margin-bottom: 40px; background-color: #ffffff;">
@@ -152,8 +145,6 @@
             <div id="chartContainer" style="height: 370px; width: 100%;"></div>
         </div>
         <div class="row" style="height: 40px;"></div>
-        
-
       {% endif %}
 </div>
 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
@@ -169,6 +160,5 @@
         });
     });
 </script>
-
 
 {% endblock %}

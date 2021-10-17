@@ -45,7 +45,6 @@ Teams
                     </tr>
                 </thead>
                 {% for team in ladder %}
-                    
                         <tr id={{team.teamname}} class="clickable-row" style="cursor: pointer;" data-href="/teamdetail?team={{team.teamname}}">
                             <td style="text-align: end;">{{ team.fullname }}</td>
                             <td>{{ team.wins }}</td>
